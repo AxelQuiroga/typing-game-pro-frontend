@@ -146,8 +146,8 @@ export function DashboardScreen({ nickname, onBack }: DashboardScreenProps) {
                         fontFamily: 'monospace',
                         fontSize: '12px',
                       }}
-                      formatter={(value: string | number | (string | number)[]) => [`${value}%`, 'Accuracy']}
-                      labelFormatter={(d: string) => new Date(d).toLocaleDateString()}
+                      formatter={(value) => [`${value}%`, 'Accuracy']}
+                      labelFormatter={(label) => new Date(String(label)).toLocaleDateString()}
                     />
                     <Line
                       type="monotone"
