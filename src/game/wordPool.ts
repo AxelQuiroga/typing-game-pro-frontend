@@ -37,10 +37,10 @@ export function pickWord(level: number): string {
 
   do {
     word = pool[Math.floor(Math.random() * pool.length)]!;
-  } while (word === lastWord && pool.length > 1);
+  } while (word.toLowerCase() === lastWord && pool.length > 1);
 
-  lastWord = word;
-  return word;
+  lastWord = word.toLowerCase();
+  return lastWord;
 }
 
 /**
