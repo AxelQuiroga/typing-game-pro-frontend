@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import type { LeaderboardEntry } from '../game/types';
 import { fetchLeaderboard, fetchPlayerScores, fetchPlayerRank } from '../services/api';
 import { useSSE } from '../hooks/useSSE';
@@ -28,19 +28,24 @@ export function LeaderboardScreen({ nickname, currentScore, onBack }: Leaderboar
   const [loading, setLoading] = useState(false);
   const [liveIndicator, setLiveIndicator] = useState(false);
 
+  // ── Ref to avoid SSE reconnect on tab change ──
+  const activeTabRef = useRef(activeTab);
+  activeTabRef.current = activeTab;
+
   // ── SSE: live updates ──
   const handleSSEScore = useCallback(() => {
     // Flash the live indicator
     setLiveIndicator(true);
     setTimeout(() => setLiveIndicator(false), 2000);
 
-    // Refresh the current tab
-    if (activeTab === 'top') {
+    // Refresh the current tab (read from ref to avoid stale closure)
+    const tab = activeTabRef.current;
+    if (tab === 'top') {
       fetchLeaderboard(25).then(setTopScores);
-    } else if (activeTab === 'my') {
+    } else if (tab === 'my') {
       fetchPlayerScores(nickname).then(setMyScores);
     }
-  }, [activeTab, nickname]);
+  }, [nickname]);
 
   useSSE({
     nickname,
