@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { LeaderboardEntry } from '../game/types';
 import { fetchLeaderboard, fetchPlayerScores, fetchPlayerRank } from '../services/api';
+import { useSSE } from '../hooks/useSSE';
 
 // ═══════════════════════════════════════════════════════════
 // LeaderboardScreen — 3-tab leaderboard
@@ -25,6 +26,27 @@ export function LeaderboardScreen({ nickname, currentScore, onBack }: Leaderboar
   const [myScores, setMyScores] = useState<LeaderboardEntry[]>([]);
   const [myRank, setMyRank] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
+  const [liveIndicator, setLiveIndicator] = useState(false);
+
+  // ── SSE: live updates ──
+  const handleSSEScore = useCallback(() => {
+    // Flash the live indicator
+    setLiveIndicator(true);
+    setTimeout(() => setLiveIndicator(false), 2000);
+
+    // Refresh the current tab
+    if (activeTab === 'top') {
+      fetchLeaderboard(25).then(setTopScores);
+    } else if (activeTab === 'my') {
+      fetchPlayerScores(nickname).then(setMyScores);
+    }
+  }, [activeTab, nickname]);
+
+  useSSE({
+    nickname,
+    onScore: handleSSEScore,
+    enabled: true,
+  });
 
   // ── Fetch data per tab ──
   const loadTab = useCallback(async (tab: Tab) => {
@@ -64,9 +86,19 @@ export function LeaderboardScreen({ nickname, currentScore, onBack }: Leaderboar
     <div className="relative w-full h-full flex flex-col items-center bg-[color:var(--color-bg-primary)] scanlines overflow-hidden">
       {/* ── Header ── */}
       <div className="relative z-10 flex flex-col items-center gap-4 pt-8 px-4 w-full max-w-lg">
-        <h1 className="text-3xl md:text-4xl font-black font-[family-name:var(--font-display)] text-[color:var(--color-neon-cyan)] glow-cyan tracking-wider">
-          LEADERBOARD
-        </h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-3xl md:text-4xl font-black font-[family-name:var(--font-display)] text-[color:var(--color-neon-cyan)] glow-cyan tracking-wider">
+            LEADERBOARD
+          </h1>
+          <div className={`flex items-center gap-1.5 px-2 py-1 rounded-full text-[10px] font-mono uppercase tracking-widest transition-all duration-300 ${
+            liveIndicator
+              ? 'bg-[color:var(--color-neon-green)]/20 text-[color:var(--color-neon-green)]'
+              : 'text-[color:var(--color-text-muted)]/40'
+          }`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${liveIndicator ? 'bg-[color:var(--color-neon-green)] animate-pulse' : 'bg-[color:var(--color-text-muted)]/30'}`} />
+            LIVE
+          </div>
+        </div>
 
         {/* ── Tabs ── */}
         <div className="flex w-full border-b border-[color:var(--color-bg-card)]">
