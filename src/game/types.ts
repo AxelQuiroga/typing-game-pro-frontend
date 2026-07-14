@@ -30,6 +30,10 @@ export interface GameState {
   wordsCompleted: number;
   /** Current speed multiplier (increases with level) */
   speedMultiplier: number;
+  /** Letters typed correctly */
+  correctLetters: number;
+  /** Total letters attempted */
+  totalLetters: number;
 }
 
 /** Configuration constants that tune the game feel */
@@ -56,6 +60,8 @@ export interface ScorePayload {
   score: number;
   level: number;
   wordsCompleted: number;
+  correctLetters: number;
+  totalLetters: number;
   /** ISO timestamp */
   timestamp: string;
 }

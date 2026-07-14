@@ -36,6 +36,8 @@ export function useGameEngine(callbacks: GameEngineCallbacks) {
   const isRunningRef = useRef(false);
   const isPausedRef = useRef(false);
   const lastWordRef = useRef('');
+  const correctLettersRef = useRef(0);
+  const totalLettersRef = useRef(0);
 
   // ── Derived: speed multiplier ──
   const getSpeedMultiplier = useCallback(() => {
@@ -60,6 +62,8 @@ export function useGameEngine(callbacks: GameEngineCallbacks) {
       combo: comboRef.current,
       wordsCompleted: wordsCompletedRef.current,
       speedMultiplier: getSpeedMultiplier(),
+      correctLetters: correctLettersRef.current,
+      totalLetters: totalLettersRef.current,
     });
     callbacks.onWordsChange([...wordsRef.current]);
   }, [callbacks, getSpeedMultiplier]);
@@ -75,6 +79,8 @@ export function useGameEngine(callbacks: GameEngineCallbacks) {
       combo: comboRef.current,
       wordsCompleted: wordsCompletedRef.current,
       speedMultiplier: getSpeedMultiplier(),
+      correctLetters: correctLettersRef.current,
+      totalLetters: totalLettersRef.current,
     });
   }, [callbacks, getSpeedMultiplier]);
 
@@ -199,6 +205,10 @@ export function useGameEngine(callbacks: GameEngineCallbacks) {
         );
 
         if (target) {
+          // Correct letter — starting a new word
+          totalLettersRef.current += 1;
+          correctLettersRef.current += 1;
+
           target.isActive = true;
           target.status = 'active';
           target.typedIndex = 1;
@@ -216,6 +226,10 @@ export function useGameEngine(callbacks: GameEngineCallbacks) {
       // Continue typing the active word
       const expectedChar = target.text[target.typedIndex];
       if (key === expectedChar) {
+        // Correct letter
+        totalLettersRef.current += 1;
+        correctLettersRef.current += 1;
+
         target.typedIndex++;
 
         // Word completed!
@@ -223,6 +237,9 @@ export function useGameEngine(callbacks: GameEngineCallbacks) {
           completeWord(target);
         }
       } else {
+        // Wrong letter
+        totalLettersRef.current += 1;
+
         // Wrong key — deactivate and break combo
         target.isActive = false;
         target.status = 'idle';
@@ -244,6 +261,8 @@ export function useGameEngine(callbacks: GameEngineCallbacks) {
     levelRef.current = 1;
     comboRef.current = 0;
     wordsCompletedRef.current = 0;
+    correctLettersRef.current = 0;
+    totalLettersRef.current = 0;
     lastSpawnRef.current = 0;
     isRunningRef.current = true;
     isPausedRef.current = false;
@@ -264,6 +283,8 @@ export function useGameEngine(callbacks: GameEngineCallbacks) {
       combo: comboRef.current,
       wordsCompleted: wordsCompletedRef.current,
       speedMultiplier: getSpeedMultiplier(),
+      correctLetters: correctLettersRef.current,
+      totalLetters: totalLettersRef.current,
     });
   }, [callbacks, getSpeedMultiplier]);
 

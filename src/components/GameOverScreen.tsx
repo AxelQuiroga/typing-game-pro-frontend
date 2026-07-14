@@ -14,7 +14,7 @@ interface GameOverScreenProps {
 }
 
 export function GameOverScreen({ finalState, nickname, onRestart }: GameOverScreenProps) {
-  const { score, level, wordsCompleted } = finalState;
+  const { score, level, wordsCompleted, correctLetters, totalLetters } = finalState;
   const [submitted, setSubmitted] = useState(false);
   const [rank, setRank] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -29,6 +29,8 @@ export function GameOverScreen({ finalState, nickname, onRestart }: GameOverScre
         score,
         level,
         wordsCompleted,
+        correctLetters,
+        totalLetters,
         timestamp: new Date().toISOString(),
       });
 
@@ -105,6 +107,21 @@ export function GameOverScreen({ finalState, nickname, onRestart }: GameOverScre
             </span>
             <span className="text-lg font-mono font-bold text-[color:var(--color-neon-green)]">
               {wordsCompleted}
+            </span>
+          </div>
+
+          {/* Accuracy */}
+          <div className="flex justify-between items-center">
+            <span className="text-xs font-mono uppercase tracking-widest text-[color:var(--color-text-muted)]">
+              Accuracy
+            </span>
+            <span className="text-lg font-mono font-bold text-[color:var(--color-neon-yellow)]">
+              {totalLetters > 0
+                ? `${Math.round((correctLetters / totalLetters) * 100)}%`
+                : '—'}
+              <span className="text-xs text-[color:var(--color-text-muted)] ml-2">
+                {correctLetters}/{totalLetters}
+              </span>
             </span>
           </div>
 

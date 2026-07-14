@@ -24,6 +24,8 @@ function App() {
     combo: 0,
     wordsCompleted: 0,
     speedMultiplier: 1,
+    correctLetters: 0,
+    totalLetters: 0,
   });
   const [words, setWords] = useState<FallingWord[]>([]);
   const [renderTick, setRenderTick] = useState(0);
