@@ -28,6 +28,12 @@ export function GameCanvas({ wordsRef, renderTrigger }: GameCanvasProps) {
 
     const { canvasWidth: w, canvasHeight: h, fontSize } = GAME_CONFIG;
 
+    // ── HiDPI scaling ──
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    ctx.scale(dpr, dpr);
+
     // ── Clear canvas ──
     ctx.clearRect(0, 0, w, h);
 
@@ -118,10 +124,10 @@ export function GameCanvas({ wordsRef, renderTrigger }: GameCanvasProps) {
   return (
     <canvas
       ref={canvasRef}
-      width={GAME_CONFIG.canvasWidth}
-      height={GAME_CONFIG.canvasHeight}
       className="rounded-lg border border-[color:var(--color-neon-cyan)]/20 box-glow-cyan"
       style={{
+        width: GAME_CONFIG.canvasWidth,
+        height: GAME_CONFIG.canvasHeight,
         background: `linear-gradient(180deg, ${COLORS.bgPrimary} 0%, ${COLORS.bgSecondary} 100%)`,
       }}
     />
