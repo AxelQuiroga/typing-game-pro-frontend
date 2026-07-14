@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+
 @theme {
   /* === Cyberpunk / Dark Mode Palette === */
   --color-bg-primary: #0a0a0f;
@@ -21,7 +22,7 @@
 }
 
 /* Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap');
+
 
 * {
   box-sizing: border-box;
