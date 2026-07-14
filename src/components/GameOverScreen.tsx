@@ -7,6 +7,14 @@ import { submitScore } from '../services/api';
 // Shows stats, submits score, and offers replay.
 // ═══════════════════════════════════════════════════════════
 
+interface Achievement {
+  key: string;
+  name: string;
+  description: string;
+  icon: string;
+  category: string;
+}
+
 interface GameOverScreenProps {
   finalState: GameState;
   nickname: string;
@@ -17,10 +25,11 @@ interface GameOverScreenProps {
 }
 
 export function GameOverScreen({ finalState, nickname, onRestart, onExit, onOpenLeaderboard, onOpenDashboard }: GameOverScreenProps) {
-  const { score, level, wordsCompleted, correctLetters, totalLetters } = finalState;
+  const { score, level, wordsCompleted, correctLetters, totalLetters, maxCombo } = finalState;
   const [submitted, setSubmitted] = useState(false);
   const [rank, setRank] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [newAchievements, setNewAchievements] = useState<Achievement[]>([]);
 
   const handleSubmitScore = async () => {
     if (submitted || isSubmitting) return;
@@ -34,12 +43,16 @@ export function GameOverScreen({ finalState, nickname, onRestart, onExit, onOpen
         wordsCompleted,
         correctLetters,
         totalLetters,
+        maxCombo,
         timestamp: new Date().toISOString(),
       });
 
       if (response.success) {
         setSubmitted(true);
         setRank(response.rank ?? null);
+        if (response.newAchievements) {
+          setNewAchievements(response.newAchievements);
+        }
       }
     } catch {
       // Service handles errors gracefully
@@ -128,6 +141,16 @@ export function GameOverScreen({ finalState, nickname, onRestart, onExit, onOpen
             </span>
           </div>
 
+          {/* Max Combo */}
+          <div className="flex justify-between items-center">
+            <span className="text-xs font-mono uppercase tracking-widest text-[color:var(--color-text-muted)]">
+              Max Combo
+            </span>
+            <span className="text-lg font-mono font-bold text-[color:var(--color-neon-red)]">
+              {maxCombo}x
+            </span>
+          </div>
+
           {/* Rank (if submitted) */}
           {submitted && rank !== null && (
             <>
@@ -139,6 +162,24 @@ export function GameOverScreen({ finalState, nickname, onRestart, onExit, onOpen
                 <span className="text-lg font-mono font-bold text-[color:var(--color-neon-pink)] glow-pink">
                   #{rank}
                 </span>
+              </div>
+            </>
+          )}
+
+          {/* New Achievements */}
+          {submitted && newAchievements.length > 0 && (
+            <>
+              <div className="h-px bg-[color:var(--color-neon-yellow)]/20" />
+              <div className="flex flex-col gap-2">
+                <span className="text-xs font-mono uppercase tracking-widest text-[color:var(--color-neon-yellow)]">
+                  🏆 Achievements Unlocked!
+                </span>
+                {newAchievements.map((ach) => (
+                  <div key={ach.key} className="flex items-center gap-2 text-sm font-mono">
+                    <span className="text-lg">{ach.icon}</span>
+                    <span className="text-[color:var(--color-neon-cyan)]">{ach.name}</span>
+                  </div>
+                ))}
               </div>
             </>
           )}

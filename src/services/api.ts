@@ -33,6 +33,7 @@ export async function submitScore(payload: ScorePayload): Promise<ScoreResponse>
       success: true,
       rank: data.rank,
       message: data.message,
+      newAchievements: data.newAchievements,
     };
   } catch (error) {
     // Backend not available — graceful fallback

@@ -34,6 +34,8 @@ export interface GameState {
   correctLetters: number;
   /** Total letters attempted */
   totalLetters: number;
+  /** Highest combo achieved this game */
+  maxCombo: number;
 }
 
 /** Configuration constants that tune the game feel */
@@ -62,6 +64,7 @@ export interface ScorePayload {
   wordsCompleted: number;
   correctLetters: number;
   totalLetters: number;
+  maxCombo: number;
   /** ISO timestamp */
   timestamp: string;
 }
@@ -71,6 +74,13 @@ export interface ScoreResponse {
   success: boolean;
   rank?: number;
   message: string;
+  newAchievements?: Array<{
+    key: string;
+    name: string;
+    description: string;
+    icon: string;
+    category: string;
+  }>;
 }
 
 /** A single leaderboard entry from the API */
@@ -82,6 +92,7 @@ export interface LeaderboardEntry {
   wordsCompleted: number;
   correctLetters: number;
   totalLetters: number;
+  maxCombo: number;
   accuracy: number;
   rank: number;
   createdAt: string;

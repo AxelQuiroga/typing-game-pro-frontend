@@ -38,6 +38,7 @@ export function useGameEngine(callbacks: GameEngineCallbacks) {
   const lastWordRef = useRef('');
   const correctLettersRef = useRef(0);
   const totalLettersRef = useRef(0);
+  const maxComboRef = useRef(0);
 
   // ── Derived: speed multiplier ──
   const getSpeedMultiplier = useCallback(() => {
@@ -64,6 +65,7 @@ export function useGameEngine(callbacks: GameEngineCallbacks) {
       speedMultiplier: getSpeedMultiplier(),
       correctLetters: correctLettersRef.current,
       totalLetters: totalLettersRef.current,
+      maxCombo: maxComboRef.current,
     });
     callbacks.onWordsChange([...wordsRef.current]);
   }, [callbacks, getSpeedMultiplier]);
@@ -81,6 +83,7 @@ export function useGameEngine(callbacks: GameEngineCallbacks) {
       speedMultiplier: getSpeedMultiplier(),
       correctLetters: correctLettersRef.current,
       totalLetters: totalLettersRef.current,
+      maxCombo: maxComboRef.current,
     });
   }, [callbacks, getSpeedMultiplier]);
 
@@ -156,6 +159,9 @@ export function useGameEngine(callbacks: GameEngineCallbacks) {
     (word: FallingWord) => {
       // Calculate combo multiplier
       comboRef.current += 1;
+      if (comboRef.current > maxComboRef.current) {
+        maxComboRef.current = comboRef.current;
+      }
       let comboMultiplier = 1;
       for (const tier of COMBO_MULTIPLIERS) {
         if (comboRef.current >= tier.threshold) {
@@ -263,6 +269,7 @@ export function useGameEngine(callbacks: GameEngineCallbacks) {
     wordsCompletedRef.current = 0;
     correctLettersRef.current = 0;
     totalLettersRef.current = 0;
+    maxComboRef.current = 0;
     lastSpawnRef.current = 0;
     isRunningRef.current = true;
     isPausedRef.current = false;
@@ -285,6 +292,7 @@ export function useGameEngine(callbacks: GameEngineCallbacks) {
       speedMultiplier: getSpeedMultiplier(),
       correctLetters: correctLettersRef.current,
       totalLetters: totalLettersRef.current,
+      maxCombo: maxComboRef.current,
     });
   }, [callbacks, getSpeedMultiplier]);
 
