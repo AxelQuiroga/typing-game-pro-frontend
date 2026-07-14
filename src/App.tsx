@@ -30,10 +30,11 @@ function App() {
 
   // Ref to access current words from the canvas render loop
   const wordsRef = useRef<FallingWord[]>([]);
+  // Sync ref with state so the canvas render loop always reads fresh data
   wordsRef.current = words;
 
   // ── Game Engine ──
-  const { startGame, handleKeyPress } = useGameEngine({
+  const { startGame, handleKeyPress, togglePause } = useGameEngine({
     onStateChange: setGameState,
     onWordsChange: (newWords) => {
       wordsRef.current = newWords;
@@ -48,10 +49,18 @@ function App() {
 
   // ── Keyboard listener (only during gameplay) ──
   useEffect(() => {
-    if (phase !== 'playing') return;
+    if (phase !== 'playing' && phase !== 'paused') return;
 
     const onKeyDown = (e: KeyboardEvent) => {
-      // Ignore modifier keys, function keys, etc.
+      // Escape toggles pause
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        togglePause();
+        setPhase((prev) => (prev === 'playing' ? 'paused' : 'playing'));
+        return;
+      }
+
+      // Ignore input during pause
       if (e.ctrlKey || e.metaKey || e.altKey) return;
       if (e.key.length !== 1) return;
 
@@ -61,7 +70,7 @@ function App() {
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [phase, handleKeyPress]);
+  }, [phase, handleKeyPress, togglePause]);
 
   // ── Handlers ──
   const handleStart = useCallback(
@@ -95,7 +104,7 @@ function App() {
     <div className="w-full h-full bg-[color:var(--color-bg-primary)] flex items-center justify-center">
       {phase === 'start' && <StartScreen onStart={handleStart} />}
 
-      {phase === 'playing' && (
+      {(phase === 'playing' || phase === 'paused') && (
         <div className="relative select-none">
           <GameCanvas wordsRef={wordsRef} renderTrigger={renderTick} />
           <GameHUD
@@ -103,6 +112,16 @@ function App() {
             activeWordText={activeWordText}
             typedProgress={typedProgress}
           />
+          {phase === 'paused' && (
+            <div className="absolute inset-0 bg-black/70 flex flex-col items-center justify-center z-50">
+              <p className="text-3xl font-bold text-[color:var(--color-neon-cyan)] tracking-widest animate-pulse-glow mb-4">
+                PAUSED
+              </p>
+              <p className="text-sm text-[color:var(--color-text-muted)]">
+                Press <kbd className="px-2 py-0.5 bg-[color:var(--color-bg-card)] rounded text-[color:var(--color-neon-yellow)]">ESC</kbd> to resume
+              </p>
+            </div>
+          )}
         </div>
       )}
 
