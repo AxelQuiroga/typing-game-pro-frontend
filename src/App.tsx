@@ -7,6 +7,7 @@ import { GameHUD } from './components/GameHUD';
 import { StartScreen } from './components/StartScreen';
 import { GameOverScreen } from './components/GameOverScreen';
 import { LeaderboardScreen } from './components/LeaderboardScreen';
+import { DashboardScreen } from './components/DashboardScreen';
 
 // ═══════════════════════════════════════════════════════════
 // App.tsx — Game Phase Orchestrator
@@ -112,6 +113,14 @@ function App() {
     setPhase('start');
   }, []);
 
+  const handleOpenDashboard = useCallback(() => {
+    setPhase('dashboard');
+  }, []);
+
+  const handleBackFromDashboard = useCallback(() => {
+    setPhase('start');
+  }, []);
+
   // ── Compute active word for HUD display ──
   const activeWord = words.find((w) => w.isActive);
   const activeWordText = activeWord?.text ?? null;
@@ -126,6 +135,7 @@ function App() {
         <StartScreen
           onStart={handleStart}
           onOpenLeaderboard={() => handleOpenLeaderboard()}
+          onOpenDashboard={handleOpenDashboard}
         />
       )}
 
@@ -157,6 +167,7 @@ function App() {
           onRestart={handleRestart}
           onExit={handleExit}
           onOpenLeaderboard={handleOpenLeaderboard}
+          onOpenDashboard={handleOpenDashboard}
         />
       )}
 
@@ -165,6 +176,13 @@ function App() {
           nickname={nickname}
           currentScore={lastSubmittedScore ?? gameState.score}
           onBack={handleBackFromLeaderboard}
+        />
+      )}
+
+      {phase === 'dashboard' && (
+        <DashboardScreen
+          nickname={nickname}
+          onBack={handleBackFromDashboard}
         />
       )}
     </div>

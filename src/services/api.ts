@@ -121,3 +121,42 @@ export async function fetchPlayerRank(score: number): Promise<number | null> {
     return null;
   }
 }
+
+export interface PlayerStats {
+  nickname: string;
+  totalGames: number;
+  bestScore: number;
+  avgScore: number;
+  bestLevel: number;
+  avgAccuracy: number;
+  totalWordsCompleted: number;
+  totalCorrectLetters: number;
+  totalLettersTyped: number;
+  scoreHistory: Array<{ score: number; accuracy: number; level: number; date: string }>;
+}
+
+/**
+ * Fetch aggregated stats for a player.
+ */
+export async function fetchPlayerStats(nickname: string): Promise<PlayerStats | null> {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/scores/stats/${encodeURIComponent(nickname)}`,
+    );
+
+    if (!response.ok) {
+      if (response.status === 404) return null;
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const data = (await response.json()) as {
+      success: boolean;
+      data: PlayerStats;
+    };
+
+    return data.data ?? null;
+  } catch {
+    console.warn('[API] Could not fetch player stats');
+    return null;
+  }
+}

@@ -13,9 +13,10 @@ interface GameOverScreenProps {
   onRestart: () => void;
   onExit: () => void;
   onOpenLeaderboard: (score: number) => void;
+  onOpenDashboard: () => void;
 }
 
-export function GameOverScreen({ finalState, nickname, onRestart, onExit, onOpenLeaderboard }: GameOverScreenProps) {
+export function GameOverScreen({ finalState, nickname, onRestart, onExit, onOpenLeaderboard, onOpenDashboard }: GameOverScreenProps) {
   const { score, level, wordsCompleted, correctLetters, totalLetters } = finalState;
   const [submitted, setSubmitted] = useState(false);
   const [rank, setRank] = useState<number | null>(null);
@@ -187,6 +188,15 @@ export function GameOverScreen({ finalState, nickname, onRestart, onExit, onOpen
               hover:shadow-[0_0_15px_rgba(176,38,255,0.4)]"
           >
             🏆 LEADERBOARD
+          </button>
+          <button
+            onClick={onOpenDashboard}
+            className="px-6 py-2 font-mono font-bold text-xs uppercase tracking-widest rounded border transition-all duration-200
+              border-[color:var(--color-neon-yellow)]/40 text-[color:var(--color-neon-yellow)]
+              hover:bg-[color:var(--color-neon-yellow)] hover:text-[color:var(--color-bg-primary)]
+              hover:shadow-[0_0_15px_rgba(240,224,0,0.4)]"
+          >
+            📊 DASHBOARD
           </button>
         </div>
       </div>

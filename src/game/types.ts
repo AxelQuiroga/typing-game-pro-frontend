@@ -19,7 +19,7 @@ export interface FallingWord {
 }
 
 /** The game phases */
-export type GamePhase = 'start' | 'playing' | 'paused' | 'gameover' | 'leaderboard';
+export type GamePhase = 'start' | 'playing' | 'paused' | 'gameover' | 'leaderboard' | 'dashboard';
 
 /** Immutable snapshot of game state for HUD rendering */
 export interface GameState {

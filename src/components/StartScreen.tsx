@@ -8,9 +8,10 @@ import { useState } from 'react';
 interface StartScreenProps {
   onStart: (nickname: string) => void;
   onOpenLeaderboard: () => void;
+  onOpenDashboard: () => void;
 }
 
-export function StartScreen({ onStart, onOpenLeaderboard }: StartScreenProps) {
+export function StartScreen({ onStart, onOpenLeaderboard, onOpenDashboard }: StartScreenProps) {
   const [nickname, setNickname] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -116,16 +117,28 @@ export function StartScreen({ onStart, onOpenLeaderboard }: StartScreenProps) {
         </form>
 
         {/* Leaderboard button */}
-        <button
-          type="button"
-          onClick={onOpenLeaderboard}
-          className="px-6 py-2 font-mono font-bold text-xs uppercase tracking-widest rounded border transition-all duration-200
-            border-[color:var(--color-neon-purple)]/40 text-[color:var(--color-neon-purple)]
-            hover:bg-[color:var(--color-neon-purple)] hover:text-[color:var(--color-bg-primary)]
-            hover:shadow-[0_0_15px_rgba(176,38,255,0.4)]"
-        >
-          🏆 LEADERBOARD
-        </button>
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={onOpenLeaderboard}
+            className="px-6 py-2 font-mono font-bold text-xs uppercase tracking-widest rounded border transition-all duration-200
+              border-[color:var(--color-neon-purple)]/40 text-[color:var(--color-neon-purple)]
+              hover:bg-[color:var(--color-neon-purple)] hover:text-[color:var(--color-bg-primary)]
+              hover:shadow-[0_0_15px_rgba(176,38,255,0.4)]"
+          >
+            🏆 LEADERBOARD
+          </button>
+          <button
+            type="button"
+            onClick={onOpenDashboard}
+            className="px-6 py-2 font-mono font-bold text-xs uppercase tracking-widest rounded border transition-all duration-200
+              border-[color:var(--color-neon-yellow)]/40 text-[color:var(--color-neon-yellow)]
+              hover:bg-[color:var(--color-neon-yellow)] hover:text-[color:var(--color-bg-primary)]
+              hover:shadow-[0_0_15px_rgba(240,224,0,0.4)]"
+          >
+            📊 DASHBOARD
+          </button>
+        </div>
 
         {/* Footer hint */}
         <div className="text-[10px] font-mono text-[color:var(--color-text-muted)]/40 mt-8">
