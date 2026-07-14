@@ -34,6 +34,7 @@ export function useGameEngine(callbacks: GameEngineCallbacks) {
   const gameLoopRef = useRef<number>(0);
   const lastSpawnRef = useRef(0);
   const isRunningRef = useRef(false);
+  const isPausedRef = useRef(false);
 
   // ── Derived: speed multiplier ──
   const getSpeedMultiplier = useCallback(() => {
@@ -80,6 +81,12 @@ export function useGameEngine(callbacks: GameEngineCallbacks) {
   const gameLoop = useCallback(
     (timestamp: number) => {
       if (!isRunningRef.current) return;
+
+      // ── Pause: skip physics but keep the loop alive ──
+      if (isPausedRef.current) {
+        gameLoopRef.current = requestAnimationFrame(gameLoop);
+        return;
+      }
 
       const config = GAME_CONFIG;
       const multiplier = getSpeedMultiplier();
@@ -237,10 +244,25 @@ export function useGameEngine(callbacks: GameEngineCallbacks) {
     wordsCompletedRef.current = 0;
     lastSpawnRef.current = 0;
     isRunningRef.current = true;
+    isPausedRef.current = false;
 
     emitState();
     gameLoopRef.current = requestAnimationFrame(gameLoop);
   }, [gameLoop, emitState]);
+
+  // ── Toggle pause (Space or Escape) ──
+  const togglePause = useCallback(() => {
+    if (!isRunningRef.current) return;
+    isPausedRef.current = !isPausedRef.current;
+    callbacks.onStateChange({
+      score: scoreRef.current,
+      lives: livesRef.current,
+      level: levelRef.current,
+      combo: comboRef.current,
+      wordsCompleted: wordsCompletedRef.current,
+      speedMultiplier: getSpeedMultiplier(),
+    });
+  }, [callbacks, getSpeedMultiplier]);
 
   // ── Cleanup on unmount ──
   useEffect(() => {
@@ -253,6 +275,8 @@ export function useGameEngine(callbacks: GameEngineCallbacks) {
   return {
     startGame,
     handleKeyPress,
+    togglePause,
+    isPausedRef,
     /** Access words for external rendering */
     getWords: () => wordsRef.current,
   };

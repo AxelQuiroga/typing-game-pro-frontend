@@ -18,8 +18,8 @@ export interface FallingWord {
   status: 'idle' | 'active' | 'typed' | 'missed';
 }
 
-/** The three possible game states */
-export type GamePhase = 'start' | 'playing' | 'gameover';
+/** The four possible game states */
+export type GamePhase = 'start' | 'playing' | 'paused' | 'gameover';
 
 /** Immutable snapshot of game state for HUD rendering */
 export interface GameState {
