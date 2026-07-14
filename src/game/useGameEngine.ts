@@ -136,6 +136,40 @@ export function useGameEngine(callbacks: GameEngineCallbacks) {
     [emitState, triggerGameOver, getSpeedMultiplier, getSpawnInterval],
   );
 
+  // ── Complete a word: score, combo, level progression ──
+  const completeWord = useCallback(
+    (word: FallingWord) => {
+      // Calculate combo multiplier
+      comboRef.current += 1;
+      let comboMultiplier = 1;
+      for (const tier of COMBO_MULTIPLIERS) {
+        if (comboRef.current >= tier.threshold) {
+          comboMultiplier = tier.multiplier;
+        }
+      }
+
+      // Score = base points * combo multiplier * level bonus
+      const levelBonus = 1 + (levelRef.current - 1) * 0.1;
+      const points = Math.round(
+        SCORE_PER_WORD * comboMultiplier * levelBonus,
+      );
+      scoreRef.current += points;
+
+      // Track completion for level progression
+      wordsCompletedRef.current += 1;
+
+      // Level up every N words
+      const wordsForNextLevel = GAME_CONFIG.wordsPerLevel;
+      if (wordsCompletedRef.current % wordsForNextLevel === 0) {
+        levelRef.current += 1;
+      }
+
+      // Remove the word from the field
+      wordsRef.current = wordsRef.current.filter((w) => w.id !== word.id);
+    },
+    [],
+  );
+
   // ── Keyboard Input Handler ──
   const handleKeyPress = useCallback(
     (key: string) => {
@@ -189,41 +223,7 @@ export function useGameEngine(callbacks: GameEngineCallbacks) {
 
       emitState();
     },
-    [emitState],
-  );
-
-  // ── Complete a word: score, combo, level progression ──
-  const completeWord = useCallback(
-    (word: FallingWord) => {
-      // Calculate combo multiplier
-      comboRef.current += 1;
-      let comboMultiplier = 1;
-      for (const tier of COMBO_MULTIPLIERS) {
-        if (comboRef.current >= tier.threshold) {
-          comboMultiplier = tier.multiplier;
-        }
-      }
-
-      // Score = base points * combo multiplier * level bonus
-      const levelBonus = 1 + (levelRef.current - 1) * 0.1;
-      const points = Math.round(
-        SCORE_PER_WORD * comboMultiplier * levelBonus,
-      );
-      scoreRef.current += points;
-
-      // Track completion for level progression
-      wordsCompletedRef.current += 1;
-
-      // Level up every N words
-      const wordsForNextLevel = GAME_CONFIG.wordsPerLevel;
-      if (wordsCompletedRef.current % wordsForNextLevel === 0) {
-        levelRef.current += 1;
-      }
-
-      // Remove the word from the field
-      wordsRef.current = wordsRef.current.filter((w) => w.id !== word.id);
-    },
-    [],
+    [emitState, completeWord],
   );
 
   // ── Start the game ──

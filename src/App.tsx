@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import type { FallingWord, GamePhase, GameState } from './game/types';
 import { useGameEngine } from './game/useGameEngine';
-import { GAME_CONFIG } from './game/constants';
+
 import { GameCanvas } from './components/GameCanvas';
 import { GameHUD } from './components/GameHUD';
 import { StartScreen } from './components/StartScreen';

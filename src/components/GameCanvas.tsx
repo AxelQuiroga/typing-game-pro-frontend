@@ -72,9 +72,9 @@ export function GameCanvas({ wordsRef, renderTrigger }: GameCanvasProps) {
       const { text, x, y, typedIndex, status } = word;
 
       // Determine colors based on state
-      let typedColor = COLORS.neonGreen;
-      let untypedColor = COLORS.neonCyan;
-      let glowColor = COLORS.neonCyan;
+      let typedColor: string = COLORS.neonGreen;
+      let untypedColor: string = COLORS.neonCyan;
+      let glowColor: string = COLORS.neonCyan;
 
       if (status === 'active') {
         untypedColor = '#ffffff';

@@ -36,7 +36,7 @@ export function pickWord(level: number): string {
   let word: string;
 
   do {
-    word = pool[Math.floor(Math.random() * pool.length)];
+    word = pool[Math.floor(Math.random() * pool.length)]!;
   } while (word === lastWord && pool.length > 1);
 
   lastWord = word;
