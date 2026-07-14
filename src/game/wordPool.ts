@@ -1,13 +1,15 @@
 import type { FallingWord } from './types';
+import type { MutableRefObject } from 'react';
 import { WORD_BANK, DIFFICULTY_TIERS } from './constants';
 
 // ═══════════════════════════════════════════════════════════
 // Word Pool Manager
 // Selects words based on current difficulty level,
 // ensures no immediate repeats.
+//
+// State (lastWord) is owned by the game engine hook via ref.
+// This module is pure — no module-level mutable state.
 // ═══════════════════════════════════════════════════════════
-
-let lastWord = '';
 
 /**
  * Get the available word pool based on the current game level.
@@ -30,17 +32,18 @@ function getWordPool(level: number): readonly string[] {
 
 /**
  * Pick a random word from the pool, avoiding immediate repeats.
+ * Uses the engine's lastWordRef for repeat prevention.
  */
-export function pickWord(level: number): string {
+export function pickWord(level: number, lastWordRef: MutableRefObject<string>): string {
   const pool = getWordPool(level);
   let word: string;
 
   do {
     word = pool[Math.floor(Math.random() * pool.length)]!;
-  } while (word.toLowerCase() === lastWord && pool.length > 1);
+  } while (word.toLowerCase() === lastWordRef.current && pool.length > 1);
 
-  lastWord = word.toLowerCase();
-  return lastWord;
+  lastWordRef.current = word.toLowerCase();
+  return lastWordRef.current;
 }
 
 /**
@@ -50,8 +53,9 @@ export function createFallingWord(
   level: number,
   canvasWidth: number,
   fontSize: number,
+  lastWordRef: MutableRefObject<string>,
 ): FallingWord {
-  const text = pickWord(level);
+  const text = pickWord(level, lastWordRef);
   const textWidth = text.length * (fontSize * 0.6);
 
   return {

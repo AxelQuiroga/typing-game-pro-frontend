@@ -35,6 +35,7 @@ export function useGameEngine(callbacks: GameEngineCallbacks) {
   const lastSpawnRef = useRef(0);
   const isRunningRef = useRef(false);
   const isPausedRef = useRef(false);
+  const lastWordRef = useRef('');
 
   // ── Derived: speed multiplier ──
   const getSpeedMultiplier = useCallback(() => {
@@ -98,6 +99,7 @@ export function useGameEngine(callbacks: GameEngineCallbacks) {
           levelRef.current,
           config.canvasWidth,
           config.fontSize,
+          lastWordRef,
         );
         newWord.speed = config.baseFallSpeed * multiplier;
         wordsRef.current.push(newWord);
@@ -245,6 +247,7 @@ export function useGameEngine(callbacks: GameEngineCallbacks) {
     lastSpawnRef.current = 0;
     isRunningRef.current = true;
     isPausedRef.current = false;
+    lastWordRef.current = '';
 
     emitState();
     gameLoopRef.current = requestAnimationFrame(gameLoop);
