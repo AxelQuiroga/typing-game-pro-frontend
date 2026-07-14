@@ -18,8 +18,8 @@ export interface FallingWord {
   status: 'idle' | 'active' | 'typed' | 'missed';
 }
 
-/** The four possible game states */
-export type GamePhase = 'start' | 'playing' | 'paused' | 'gameover';
+/** The game phases */
+export type GamePhase = 'start' | 'playing' | 'paused' | 'gameover' | 'leaderboard';
 
 /** Immutable snapshot of game state for HUD rendering */
 export interface GameState {
@@ -71,4 +71,18 @@ export interface ScoreResponse {
   success: boolean;
   rank?: number;
   message: string;
+}
+
+/** A single leaderboard entry from the API */
+export interface LeaderboardEntry {
+  id: number;
+  nickname: string;
+  score: number;
+  level: number;
+  wordsCompleted: number;
+  correctLetters: number;
+  totalLetters: number;
+  accuracy: number;
+  rank: number;
+  createdAt: string;
 }

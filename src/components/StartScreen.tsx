@@ -7,9 +7,10 @@ import { useState } from 'react';
 
 interface StartScreenProps {
   onStart: (nickname: string) => void;
+  onOpenLeaderboard: () => void;
 }
 
-export function StartScreen({ onStart }: StartScreenProps) {
+export function StartScreen({ onStart, onOpenLeaderboard }: StartScreenProps) {
   const [nickname, setNickname] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -113,6 +114,18 @@ export function StartScreen({ onStart }: StartScreenProps) {
             ▸ START GAME
           </button>
         </form>
+
+        {/* Leaderboard button */}
+        <button
+          type="button"
+          onClick={onOpenLeaderboard}
+          className="px-6 py-2 font-mono font-bold text-xs uppercase tracking-widest rounded border transition-all duration-200
+            border-[color:var(--color-neon-purple)]/40 text-[color:var(--color-neon-purple)]
+            hover:bg-[color:var(--color-neon-purple)] hover:text-[color:var(--color-bg-primary)]
+            hover:shadow-[0_0_15px_rgba(176,38,255,0.4)]"
+        >
+          🏆 LEADERBOARD
+        </button>
 
         {/* Footer hint */}
         <div className="text-[10px] font-mono text-[color:var(--color-text-muted)]/40 mt-8">

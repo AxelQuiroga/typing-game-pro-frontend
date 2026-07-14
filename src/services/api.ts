@@ -1,7 +1,7 @@
-import type { ScorePayload, ScoreResponse } from '../game/types';
+import type { ScorePayload, ScoreResponse, LeaderboardEntry } from '../game/types';
 
 // ═══════════════════════════════════════════════════════════
-// API Service Layer — Phase 2: Real Backend
+// API Service Layer
 //
 // All HTTP concerns isolated here.
 // When backend is unreachable, gracefully falls back to simulation
@@ -51,7 +51,7 @@ export async function submitScore(payload: ScorePayload): Promise<ScoreResponse>
 /**
  * Fetch the top N scores from the leaderboard.
  */
-export async function fetchLeaderboard(limit: number = 10): Promise<ScorePayload[]> {
+export async function fetchLeaderboard(limit: number = 25): Promise<LeaderboardEntry[]> {
   try {
     const response = await fetch(`${API_BASE_URL}/api/scores?limit=${limit}`);
 
@@ -61,24 +61,63 @@ export async function fetchLeaderboard(limit: number = 10): Promise<ScorePayload
 
     const data = (await response.json()) as {
       success: boolean;
-      data: Array<{
-        nickname: string;
-        score: number;
-        level: number;
-        wordsCompleted: number;
-        createdAt: string;
-      }>;
+      data: LeaderboardEntry[];
     };
 
-    return data.data.map((entry) => ({
-      nickname: entry.nickname,
-      score: entry.score,
-      level: entry.level,
-      wordsCompleted: entry.wordsCompleted,
-      timestamp: entry.createdAt,
-    }));
+    return data.data ?? [];
   } catch {
     console.warn('[API] Could not fetch leaderboard');
     return [];
+  }
+}
+
+/**
+ * Fetch a player's score history.
+ */
+export async function fetchPlayerScores(
+  nickname: string,
+  limit: number = 20,
+): Promise<LeaderboardEntry[]> {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/api/scores/player/${encodeURIComponent(nickname)}?limit=${limit}`,
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const data = (await response.json()) as {
+      success: boolean;
+      data: LeaderboardEntry[];
+    };
+
+    return data.data ?? [];
+  } catch {
+    console.warn('[API] Could not fetch player scores');
+    return [];
+  }
+}
+
+/**
+ * Fetch the global rank for a given score.
+ */
+export async function fetchPlayerRank(score: number): Promise<number | null> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/scores/rank/${score}`);
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const data = (await response.json()) as {
+      success: boolean;
+      rank: number;
+    };
+
+    return data.rank ?? null;
+  } catch {
+    console.warn('[API] Could not fetch rank');
+    return null;
   }
 }

@@ -6,6 +6,7 @@ import { GameCanvas } from './components/GameCanvas';
 import { GameHUD } from './components/GameHUD';
 import { StartScreen } from './components/StartScreen';
 import { GameOverScreen } from './components/GameOverScreen';
+import { LeaderboardScreen } from './components/LeaderboardScreen';
 
 // ═══════════════════════════════════════════════════════════
 // App.tsx — Game Phase Orchestrator
@@ -29,6 +30,7 @@ function App() {
   });
   const [words, setWords] = useState<FallingWord[]>([]);
   const [renderTick, setRenderTick] = useState(0);
+  const [lastSubmittedScore, setLastSubmittedScore] = useState<number | null>(null);
 
   // Ref to access current words from the canvas render loop
   const wordsRef = useRef<FallingWord[]>([]);
@@ -94,6 +96,16 @@ function App() {
     });
   }, [startGame]);
 
+  // ── Navigation handlers ──
+  const handleOpenLeaderboard = useCallback((fromScore?: number) => {
+    if (fromScore != null) setLastSubmittedScore(fromScore);
+    setPhase('leaderboard');
+  }, []);
+
+  const handleBackFromLeaderboard = useCallback(() => {
+    setPhase('start');
+  }, []);
+
   // ── Compute active word for HUD display ──
   const activeWord = words.find((w) => w.isActive);
   const activeWordText = activeWord?.text ?? null;
@@ -104,7 +116,12 @@ function App() {
   // ── Render ──
   return (
     <div className="w-full h-full bg-[color:var(--color-bg-primary)] flex items-center justify-center">
-      {phase === 'start' && <StartScreen onStart={handleStart} />}
+      {phase === 'start' && (
+        <StartScreen
+          onStart={handleStart}
+          onOpenLeaderboard={() => handleOpenLeaderboard()}
+        />
+      )}
 
       {(phase === 'playing' || phase === 'paused') && (
         <div className="relative select-none">
@@ -132,6 +149,15 @@ function App() {
           finalState={gameState}
           nickname={nickname}
           onRestart={handleRestart}
+          onOpenLeaderboard={handleOpenLeaderboard}
+        />
+      )}
+
+      {phase === 'leaderboard' && (
+        <LeaderboardScreen
+          nickname={nickname}
+          currentScore={lastSubmittedScore ?? gameState.score}
+          onBack={handleBackFromLeaderboard}
         />
       )}
     </div>
