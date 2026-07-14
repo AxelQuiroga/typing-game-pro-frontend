@@ -11,10 +11,11 @@ interface GameOverScreenProps {
   finalState: GameState;
   nickname: string;
   onRestart: () => void;
+  onExit: () => void;
   onOpenLeaderboard: (score: number) => void;
 }
 
-export function GameOverScreen({ finalState, nickname, onRestart, onOpenLeaderboard }: GameOverScreenProps) {
+export function GameOverScreen({ finalState, nickname, onRestart, onExit, onOpenLeaderboard }: GameOverScreenProps) {
   const { score, level, wordsCompleted, correctLetters, totalLetters } = finalState;
   const [submitted, setSubmitted] = useState(false);
   const [rank, setRank] = useState<number | null>(null);
@@ -165,7 +166,17 @@ export function GameOverScreen({ finalState, nickname, onRestart, onOpenLeaderbo
               hover:bg-[color:var(--color-neon-cyan)] hover:text-[color:var(--color-bg-primary)]
               hover:shadow-[0_0_20px_rgba(0,240,255,0.5)]"
           >
-            ▸ PLAY AGAIN
+            🔄 RETRY
+          </button>
+
+          <button
+            onClick={onExit}
+            className="px-6 py-2.5 font-mono font-bold text-sm uppercase tracking-widest rounded border-2 transition-all duration-200
+              border-[color:var(--color-neon-red)]/40 text-[color:var(--color-neon-red)]
+              hover:bg-[color:var(--color-neon-red)] hover:text-[color:var(--color-bg-primary)]
+              hover:shadow-[0_0_20px_rgba(255,46,76,0.4)]"
+          >
+            🚪 EXIT
           </button>
 
           <button

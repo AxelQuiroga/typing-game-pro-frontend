@@ -96,6 +96,12 @@ function App() {
     });
   }, [startGame]);
 
+  const handleExit = useCallback(() => {
+    setNickname('');
+    setLastSubmittedScore(null);
+    setPhase('start');
+  }, []);
+
   // ── Navigation handlers ──
   const handleOpenLeaderboard = useCallback((fromScore?: number) => {
     if (fromScore != null) setLastSubmittedScore(fromScore);
@@ -149,6 +155,7 @@ function App() {
           finalState={gameState}
           nickname={nickname}
           onRestart={handleRestart}
+          onExit={handleExit}
           onOpenLeaderboard={handleOpenLeaderboard}
         />
       )}
