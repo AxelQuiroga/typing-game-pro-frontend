@@ -33,7 +33,7 @@ interface UseSSEOptions {
 
 export function useSSE({ nickname, onScore, onAchievement, enabled = true }: UseSSEOptions) {
   const eventSourceRef = useRef<EventSource | null>(null);
-  const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reconnectAttemptsRef = useRef(0);
 
   const connect = useCallback(() => {
