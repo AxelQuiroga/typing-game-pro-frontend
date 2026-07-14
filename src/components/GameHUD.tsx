@@ -1,4 +1,5 @@
 import type { GameState } from '../game/types';
+import { GAME_CONFIG } from '../game/constants';
 
 // ═══════════════════════════════════════════════════════════
 // GameHUD — Heads-Up Display overlay.
@@ -65,7 +66,7 @@ export function GameHUD({ state, activeWordText, typedProgress }: GameHUDProps) 
           Lives
         </div>
         <div className="flex gap-1">
-          {Array.from({ length: 3 }).map((_, i) => (
+          {Array.from({ length: GAME_CONFIG.maxLives }).map((_, i) => (
             <div
               key={i}
               className={`w-3 h-3 rounded-full transition-all duration-300 ${
